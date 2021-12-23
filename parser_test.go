@@ -1,16 +1,41 @@
 package main_test
 
 import (
+	"bytes"
 	"testing"
+
+	. "github.com/ksrnnb/hack-assembler-go"
 )
 
-func TestDefaultHasDone(t *testing.T) {
-	// TODO: test....
+func TestHasMoreCommands(t *testing.T) {
+	reader := bytes.NewReader([]byte("@2"))
+	parser := NewParser(reader)
 
-	// reader := bytes.NewReader([]byte("test"))
-	// parser := NewParser(reader)
+	if !parser.HasMoreCommands() {
+		t.Error("parser should not be done")
+	}
 
-	// if !parser.HasMoreCommands() {
-	// 	t.Error("default had done should be false")
-	// }
+	parser.Advance()
+	parser.Advance()
+
+	if parser.HasMoreCommands() {
+		t.Error("parser should be done")
+	}
+}
+
+func TestAdvance(t *testing.T) {
+	reader := bytes.NewReader([]byte("@2\nD=M"))
+	parser := NewParser(reader)
+
+	parser.Advance()
+
+	if parser.CurrentCommand() != "@2" {
+		t.Error("1st current command is invalid")
+	}
+
+	parser.Advance()
+
+	if parser.CurrentCommand() != "D=M" {
+		t.Error("2nd current command is invalid")
+	}
 }

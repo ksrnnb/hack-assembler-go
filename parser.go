@@ -22,10 +22,18 @@ func (p Parser) HasMoreCommands() bool {
 }
 
 func (p *Parser) Advance() {
-	p.scanner.Scan()
+	if !p.scanner.Scan() {
+		p.isDone = true
+		return
+	}
 
 	command := p.scanner.Text()
 
-	fmt.Println(command)
 	// TODO: commandの整形
+	fmt.Println(command)
+	p.currentCommand = command
+}
+
+func (p Parser) CurrentCommand() string {
+	return p.currentCommand
 }
