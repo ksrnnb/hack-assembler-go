@@ -2,8 +2,8 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"io"
+	"strings"
 )
 
 type Parser struct {
@@ -28,12 +28,22 @@ func (p *Parser) Advance() {
 	}
 
 	command := p.scanner.Text()
+	cmdRemovedSpace := strings.ReplaceAll(command, " ", "")
+	cmd := strings.Split(cmdRemovedSpace, "//")[0]
 
-	// TODO: commandの整形
-	fmt.Println(command)
-	p.currentCommand = command
+	if isEmptyLine(cmd) {
+		p.Advance()
+		return
+	}
+
+	p.currentCommand = cmd
 }
 
 func (p Parser) CurrentCommand() string {
 	return p.currentCommand
+}
+
+// 改行のみの場合にtrue
+func isEmptyLine(command string) bool {
+	return command == ""
 }
