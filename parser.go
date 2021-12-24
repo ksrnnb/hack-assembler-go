@@ -85,6 +85,28 @@ func (p Parser) Symbol() (symbol string, err error) {
 	}
 }
 
+// destを返す
+// M=M+1の左辺
+func (p Parser) Dest() (dest string, err error) {
+	cmdType, err := p.CommandType()
+
+	if err != nil {
+		return "", err
+	}
+
+	if cmdType != CCommand {
+		return "", errors.New("Dest: command type should be c command")
+	}
+
+	cmds := strings.Split(p.currentCommand, "=")
+
+	if cmds[0] == "" {
+		return "", errors.New("Dest: c command should include '='")
+	}
+
+	return cmds[0], nil
+}
+
 // 改行のみの場合にtrue
 func isEmptyLine(command string) bool {
 	return command == ""

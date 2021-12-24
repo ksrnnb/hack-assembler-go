@@ -91,6 +91,28 @@ func TestAdvanceWithSpace(t *testing.T) {
 	}
 }
 
+func TestDest(t *testing.T) {
+	reader := bytes.NewReader([]byte("@2\nM=M+1"))
+	parser := NewParser(reader)
+
+	parser.Advance()
+
+	if _, err := parser.Dest(); err == nil {
+		t.Error("A command cannot get dest")
+	}
+
+	parser.Advance()
+
+	dest, err := parser.Dest()
+	if err != nil {
+		t.Error("C command should be executable Dest()")
+	}
+
+	if dest != "M" {
+		t.Error("Dest is invalid")
+	}
+}
+
 func TestSymbol(t *testing.T) {
 	reader := bytes.NewReader([]byte("@2\nD=M\n(xxx)"))
 	parser := NewParser(reader)
