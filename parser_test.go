@@ -90,3 +90,37 @@ func TestAdvanceWithSpace(t *testing.T) {
 		t.Error("2nd current command is invalid")
 	}
 }
+
+func TestSymbol(t *testing.T) {
+	reader := bytes.NewReader([]byte("@2\nD=M\n(xxx)"))
+	parser := NewParser(reader)
+
+	parser.Advance()
+	symbol, err := parser.Symbol()
+
+	if err != nil {
+		t.Error("symbol error")
+	}
+
+	if symbol != "2" {
+		t.Error("A Command parse error")
+	}
+
+	parser.Advance()
+	_, err = parser.Symbol()
+
+	if err == nil {
+		t.Error("C command should not be called")
+	}
+
+	parser.Advance()
+	lSymbol, err := parser.Symbol()
+
+	if err != nil {
+		t.Error("symbol error")
+	}
+
+	if lSymbol != "xxx" {
+		t.Error("L Command parse error")
+	}
+}
