@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/ksrnnb/hack-assembler-go/code"
 	"github.com/ksrnnb/hack-assembler-go/parser"
@@ -12,7 +13,24 @@ import (
 )
 
 func main() {
-	inputFile, err := os.Open("max.asm")
+	args := os.Args
+
+	if len(args) != 2 {
+		panic("1 argument should be given")
+	}
+
+	filename := args[1]
+
+	names := strings.Split(filename, ".")
+	if len(names) != 2 {
+		panic("file should have extension")
+	}
+
+	if names[1] != "asm" {
+		panic("extension should be asm")
+	}
+
+	inputFile, err := os.Open(args[1])
 
 	if err != nil {
 		panic(err)
@@ -33,7 +51,7 @@ func main() {
 
 	p := parser.NewParser(inputFile)
 
-	out, err := os.Create("test.hack")
+	out, err := os.Create(names[0] + ".hack")
 
 	if err != nil {
 		panic(err)
