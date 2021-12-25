@@ -91,7 +91,7 @@ func RegisterSymbolTable(input io.Reader) error {
 			return err
 		}
 
-		st[symbol] = ROMAddress + 1
+		st[symbol] = ROMAddress
 	}
 
 	return nil
