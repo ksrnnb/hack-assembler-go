@@ -65,9 +65,12 @@ func (p Parser) CommandType() (commandType int, err error) {
 		return LCommand, nil
 	}
 
-	return CCommand, nil
+	if len(strings.Split(p.currentCommand, "=")) == 2 ||
+		len(strings.Split(p.currentCommand, ";")) == 2 {
+		return CCommand, nil
+	}
 
-	// return 0, errors.New("error while getting command type")
+	return 0, errors.New("error while getting command type")
 }
 
 func (p Parser) Symbol() (symbol string, err error) {
@@ -90,7 +93,7 @@ func (p Parser) Symbol() (symbol string, err error) {
 }
 
 // destを返す
-// M=M+1の左辺
+// dest=comp;jump
 func (p Parser) Dest() (dest string, err error) {
 	cmdType, err := p.CommandType()
 
@@ -104,15 +107,15 @@ func (p Parser) Dest() (dest string, err error) {
 
 	cmds := strings.Split(p.currentCommand, "=")
 
-	if cmds[0] == "" {
-		return "", errors.New("Dest: c command should include '='")
+	if len(cmds) == 2 {
+		return cmds[0], nil
 	}
 
-	return cmds[0], nil
+	return "null", nil
 }
 
-// destを返す
-// M=M+1の右辺
+// compを返す
+// dest=comp;jump
 func (p Parser) Comp() (comp string, err error) {
 	cmdType, err := p.CommandType()
 
@@ -125,16 +128,32 @@ func (p Parser) Comp() (comp string, err error) {
 	}
 
 	cmds := strings.Split(p.currentCommand, "=")
+	if len(cmds) == 2 {
+		// dest=comp;jump
+		cmds = strings.Split(cmds[1], ";")
 
-	if len(cmds) < 2 {
-		return "", errors.New("Comp: c command should include '='")
+		if len(cmds) == 2 {
+			// comp, jump
+			return cmds[1], nil
+		}
+
+		// dest, jump
+		return cmds[0], nil
 	}
 
-	return cmds[1], nil
+	// destが無い場合 => comp;jump
+	cmds = strings.Split(p.currentCommand, ";")
+
+	if len(cmds) == 2 {
+		// comp, jump
+		return cmds[0], nil
+	}
+
+	return "", errors.New("Comp: c command should include '=' or ';'")
 }
 
 // jumpを返す
-// D;JMPの右辺
+// dest=comp;jump
 func (p Parser) Jump() (comp string, err error) {
 	cmdType, err := p.CommandType()
 

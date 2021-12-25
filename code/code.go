@@ -1,6 +1,8 @@
 package code
 
-import "errors"
+import (
+	"errors"
+)
 
 func Dest(mnemonic string) (int, error) {
 	switch mnemonic {
@@ -22,7 +24,7 @@ func Dest(mnemonic string) (int, error) {
 		return 0b111, nil
 	}
 
-	return 0b000, errors.New("dest mnemonic is invalid")
+	return 0b000, nil
 }
 
 func Comp(mnemonic string) (int, error) {

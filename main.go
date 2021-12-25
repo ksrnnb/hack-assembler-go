@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	inputFile, err := os.Open("test.asm")
+	inputFile, err := os.Open("max.asm")
 
 	if err != nil {
 		panic(err)
@@ -49,13 +49,13 @@ func main() {
 		cmdType, err := p.CommandType()
 
 		if err != nil {
-			fmt.Printf("error while parsing command type: %v", err)
+			fmt.Printf("error while parsing command type: %v\n", err)
 			break
 		}
 
 		if cmdType == parser.ACommand {
 			if err := doACommand(p, out); err != nil {
-				fmt.Printf("error while doing A command: %v", err)
+				fmt.Printf("error while doing A command: %v\n", err)
 				break
 			}
 			continue
@@ -63,7 +63,7 @@ func main() {
 
 		if cmdType == parser.CCommand {
 			if err := doCCommand(p, out); err != nil {
-				fmt.Printf("error while doing C command: %v", err)
+				fmt.Printf("error while doing C command: %v\n", err)
 				break
 			}
 			continue
