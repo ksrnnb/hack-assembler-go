@@ -168,3 +168,35 @@ func TestComp(t *testing.T) {
 		t.Error("Comp is invalid")
 	}
 }
+
+func TestJump(t *testing.T) {
+	reader := bytes.NewReader([]byte("@2\nM=M+1\nD;JMP"))
+	parser := NewParser(reader)
+
+	parser.Advance()
+
+	if _, err := parser.Jump(); err == nil {
+		t.Error("A command cannot get comp")
+	}
+
+	parser.Advance()
+	jump, err := parser.Jump()
+	if err != nil {
+		t.Error("C command should be executable Jump()")
+	}
+
+	if jump != "" {
+		t.Error("jump should be empty string for 'M=M+1'")
+	}
+
+	parser.Advance()
+	jump, err = parser.Jump()
+
+	if err != nil {
+		t.Error("C command should be executable Jump()")
+	}
+
+	if jump != "JMP" {
+		t.Error("Comp is invalid")
+	}
+}

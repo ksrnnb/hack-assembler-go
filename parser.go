@@ -19,6 +19,20 @@ type Parser struct {
 	isDone         bool
 }
 
+type stringSlice []string
+
+var jumpMnemonic stringSlice = []string{"JGT", "JEQ", "JGE", "JLT", "JNE", "JLE", "JMP"}
+
+func (ss stringSlice) contains(str string) bool {
+	for _, s := range ss {
+		if s == str {
+			return true
+		}
+	}
+
+	return false
+}
+
 func NewParser(r io.Reader) *Parser {
 	scanner := bufio.NewScanner(r)
 	return &Parser{scanner: scanner, isDone: false}
@@ -124,6 +138,32 @@ func (p Parser) Comp() (comp string, err error) {
 
 	if len(cmds) < 2 {
 		return "", errors.New("Comp: c command should include '='")
+	}
+
+	return cmds[1], nil
+}
+
+// jumpを返す
+// D;JMPの右辺
+func (p Parser) Jump() (comp string, err error) {
+	cmdType, err := p.CommandType()
+
+	if err != nil {
+		return "", err
+	}
+
+	if cmdType != CCommand {
+		return "", errors.New("Jump: command type should be c command")
+	}
+
+	cmds := strings.Split(p.currentCommand, ";")
+
+	if len(cmds) < 2 {
+		return "", nil
+	}
+
+	if !jumpMnemonic.contains(cmds[1]) {
+		return "", errors.New("Jump: mnemonic is invalid")
 	}
 
 	return cmds[1], nil
