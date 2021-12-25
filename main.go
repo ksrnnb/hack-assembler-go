@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/ksrnnb/hack-assembler-go/code"
+	"github.com/ksrnnb/hack-assembler-go/parser"
 )
 
 func main() {
@@ -18,7 +19,7 @@ func main() {
 
 	defer inputFile.Close()
 
-	parser := NewParser(inputFile)
+	p := parser.NewParser(inputFile)
 
 	out, err := os.Create("test.hack")
 
@@ -27,29 +28,29 @@ func main() {
 	}
 
 	for {
-		parser.Advance()
+		p.Advance()
 
-		if !parser.HasMoreCommands() {
+		if !p.HasMoreCommands() {
 			break
 		}
 
-		cmdType, err := parser.CommandType()
+		cmdType, err := p.CommandType()
 
 		if err != nil {
 			fmt.Printf("error while parsing command type: %v", err)
 			break
 		}
 
-		if cmdType == ACommand {
-			if err := doACommand(parser, out); err != nil {
+		if cmdType == parser.ACommand {
+			if err := doACommand(p, out); err != nil {
 				fmt.Printf("error while doing A command: %v", err)
 				break
 			}
 			continue
 		}
 
-		if cmdType == CCommand {
-			if err := doCCommand(parser, out); err != nil {
+		if cmdType == parser.CCommand {
+			if err := doCCommand(p, out); err != nil {
 				fmt.Printf("error while doing C command: %v", err)
 				break
 			}
@@ -58,7 +59,7 @@ func main() {
 	}
 }
 
-func doACommand(parser *Parser, out io.Writer) error {
+func doACommand(parser *parser.Parser, out io.Writer) error {
 	symbol, err := parser.Symbol()
 
 	if err != nil {
@@ -75,7 +76,7 @@ func doACommand(parser *Parser, out io.Writer) error {
 	return nil
 }
 
-func doCCommand(parser *Parser, out io.Writer) error {
+func doCCommand(parser *parser.Parser, out io.Writer) error {
 	dest, err := parser.Dest()
 
 	if err != nil {

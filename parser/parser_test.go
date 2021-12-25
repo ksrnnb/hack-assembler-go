@@ -1,10 +1,10 @@
-package main_test
+package parser_test
 
 import (
 	"bytes"
 	"testing"
 
-	. "github.com/ksrnnb/hack-assembler-go"
+	. "github.com/ksrnnb/hack-assembler-go/parser"
 )
 
 func TestHasMoreCommands(t *testing.T) {

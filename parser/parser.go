@@ -1,10 +1,12 @@
-package main
+package parser
 
 import (
 	"bufio"
 	"errors"
 	"io"
 	"strings"
+
+	"github.com/ksrnnb/hack-assembler-go/utils"
 )
 
 const (
@@ -19,7 +21,7 @@ type Parser struct {
 	isDone         bool
 }
 
-var jumpMnemonic stringSlice = []string{"JGT", "JEQ", "JGE", "JLT", "JNE", "JLE", "JMP"}
+var jumpMnemonic utils.StringSlice = []string{"JGT", "JEQ", "JGE", "JLT", "JNE", "JLE", "JMP"}
 
 func NewParser(r io.Reader) *Parser {
 	scanner := bufio.NewScanner(r)
@@ -150,7 +152,7 @@ func (p Parser) Jump() (comp string, err error) {
 		return "null", nil
 	}
 
-	if !jumpMnemonic.contains(cmds[1]) {
+	if !jumpMnemonic.Contains(cmds[1]) {
 		return "", errors.New("Jump: mnemonic is invalid")
 	}
 
