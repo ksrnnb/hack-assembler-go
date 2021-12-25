@@ -185,8 +185,8 @@ func TestJump(t *testing.T) {
 		t.Error("C command should be executable Jump()")
 	}
 
-	if jump != "" {
-		t.Error("jump should be empty string for 'M=M+1'")
+	if jump != "null" {
+		t.Error("jump should be 'null' string for 'M=M+1'")
 	}
 
 	parser.Advance()

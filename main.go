@@ -8,6 +8,7 @@ import (
 
 	"github.com/ksrnnb/hack-assembler-go/code"
 	"github.com/ksrnnb/hack-assembler-go/parser"
+	"github.com/ksrnnb/hack-assembler-go/symbol"
 )
 
 func main() {
@@ -18,6 +19,17 @@ func main() {
 	}
 
 	defer inputFile.Close()
+	err = symbol.RegisterSymbolTable(inputFile)
+
+	if err != nil {
+		panic(err)
+	}
+
+	// ファイルの読み込み位置を先頭位置に戻す
+	_, err = inputFile.Seek(0, 0)
+	if err != nil {
+		panic(err)
+	}
 
 	p := parser.NewParser(inputFile)
 
@@ -60,19 +72,31 @@ func main() {
 }
 
 func doACommand(parser *parser.Parser, out io.Writer) error {
-	symbol, err := parser.Symbol()
+	s, err := parser.Symbol()
 
 	if err != nil {
 		return err
 	}
 
-	intSymbol, err := strconv.Atoi(symbol)
+	intSymbol, err := strconv.Atoi(s)
 
-	if err != nil {
-		return err
+	if err == nil {
+		fmt.Fprintf(out, "0%015b\n", intSymbol)
+		return nil
 	}
 
-	fmt.Fprintf(out, "0%015b\n", intSymbol)
+	if symbol.Contains(s) {
+		address, err := symbol.GetAddress(s)
+
+		if err != nil {
+			return err
+		}
+
+		fmt.Fprintf(out, "0%015b\n", address)
+	} else {
+		symbol.AddRAMEntry(s)
+	}
+
 	return nil
 }
 
