@@ -146,3 +146,25 @@ func TestSymbol(t *testing.T) {
 		t.Error("L Command parse error")
 	}
 }
+
+func TestComp(t *testing.T) {
+	reader := bytes.NewReader([]byte("@2\nM=M+1"))
+	parser := NewParser(reader)
+
+	parser.Advance()
+
+	if _, err := parser.Comp(); err == nil {
+		t.Error("A command cannot get comp")
+	}
+
+	parser.Advance()
+
+	dest, err := parser.Comp()
+	if err != nil {
+		t.Error("C command should be executable Comp()")
+	}
+
+	if dest != "M+1" {
+		t.Error("Comp is invalid")
+	}
+}
