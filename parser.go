@@ -19,19 +19,7 @@ type Parser struct {
 	isDone         bool
 }
 
-type stringSlice []string
-
 var jumpMnemonic stringSlice = []string{"JGT", "JEQ", "JGE", "JLT", "JNE", "JLE", "JMP"}
-
-func (ss stringSlice) contains(str string) bool {
-	for _, s := range ss {
-		if s == str {
-			return true
-		}
-	}
-
-	return false
-}
 
 func NewParser(r io.Reader) *Parser {
 	scanner := bufio.NewScanner(r)
