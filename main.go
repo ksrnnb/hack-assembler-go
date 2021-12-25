@@ -85,17 +85,17 @@ func doACommand(parser *parser.Parser, out io.Writer) error {
 		return nil
 	}
 
-	if symbol.Contains(s) {
-		address, err := symbol.GetAddress(s)
-
-		if err != nil {
-			return err
-		}
-
-		fmt.Fprintf(out, "0%015b\n", address)
-	} else {
+	if !symbol.Contains(s) {
 		symbol.AddRAMEntry(s)
 	}
+
+	address, err := symbol.GetAddress(s)
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Fprintf(out, "0%015b\n", address)
 
 	return nil
 }
