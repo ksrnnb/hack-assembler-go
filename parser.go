@@ -147,7 +147,7 @@ func (p Parser) Jump() (comp string, err error) {
 	cmds := strings.Split(p.currentCommand, ";")
 
 	if len(cmds) < 2 {
-		return "", nil
+		return "null", nil
 	}
 
 	if !jumpMnemonic.contains(cmds[1]) {

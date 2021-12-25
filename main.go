@@ -5,6 +5,8 @@ import (
 	"io"
 	"os"
 	"strconv"
+
+	"github.com/ksrnnb/hack-assembler-go/code"
 )
 
 func main() {
@@ -39,12 +41,18 @@ func main() {
 		}
 
 		if cmdType == ACommand {
-			doACommand(parser, out)
+			if err := doACommand(parser, out); err != nil {
+				fmt.Printf("error while doing A command: %v", err)
+				break
+			}
 			continue
 		}
 
 		if cmdType == CCommand {
-			doCCommand(parser, out)
+			if err := doCCommand(parser, out); err != nil {
+				fmt.Printf("error while doing C command: %v", err)
+				break
+			}
 			continue
 		}
 	}
@@ -67,6 +75,43 @@ func doACommand(parser *Parser, out io.Writer) error {
 	return nil
 }
 
-func doCCommand(parser *Parser, out io.Writer) {
+func doCCommand(parser *Parser, out io.Writer) error {
+	dest, err := parser.Dest()
 
+	if err != nil {
+		return err
+	}
+
+	comp, err := parser.Comp()
+
+	if err != nil {
+		return err
+	}
+
+	jump, err := parser.Jump()
+
+	if err != nil {
+		return err
+	}
+
+	destBinary, err := code.Dest(dest)
+
+	if err != nil {
+		return err
+	}
+
+	compBinary, err := code.Comp(comp)
+
+	if err != nil {
+		return err
+	}
+
+	jumpBinary, err := code.Jump(jump)
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Fprintf(out, "111%07b%03b%03b\n", compBinary, destBinary, jumpBinary)
+	return nil
 }
